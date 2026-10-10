@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>血气分析 · 酸碱判读系统</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#102a43; --navy2:#16406b; --blue:#14739e; --sky:#e8f2f8;
+  --bg:#eef2f6; --card:#ffffff; --line:#d9e2ec; --mut:#62748a;
+  --up:#c0392b; --down:#1e8e3e; --ok:#486581; --warnbg:#fef3e6;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:#243b53;line-height:1.65}
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--blue) 100%);color:#fff;padding:26px 20px 22px}
+header .inner{max-width:980px;margin:0 auto}
+header h1{font-size:22px;letter-spacing:.5px}
+header h1 span{font-weight:400;opacity:.85;font-size:15px;margin-left:8px}
+header p{font-size:13px;opacity:.85;margin-top:6px;max-width:760px}
+.wrap{max-width:980px;margin:0 auto;padding:16px 14px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(16,42,67,.06)}
+.card h2{font-size:16px;color:var(--navy);border-left:5px solid var(--blue);padding-left:10px;margin-bottom:4px}
+.card h2 small{color:var(--mut);font-weight:400;font-size:12.5px;margin-left:8px}
+.sub{font-size:12.5px;color:var(--mut);margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.field{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfdff}
+.field.req{border-color:var(--blue);background:#f0f7fc}
+.field .name{font-size:14.5px;font-weight:650}
+.field .name i{font-style:normal;font-size:11px;background:var(--navy);color:#fff;border-radius:5px;padding:1px 6px;margin-left:6px}
+.field .name i.opt{background:#bcccdc;color:#334e68}
+.field .ref{font-size:12px;color:var(--mut)}
+.field input{width:110px;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:15px;text-align:center;background:#fff}
+.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(20,115,158,.15)}
+.unit{font-size:12px;color:var(--mut);text-align:center;margin-top:2px}
+.flag{font-size:12.5px;font-weight:700;min-height:18px;text-align:center}
+.flag.up{color:var(--up)} .flag.down{color:var(--down)} .flag.ok{color:#829ab1;font-weight:400}
+.item-desc{font-size:12px;color:#8a9aad;line-height:1.55;margin-top:4px}
+body.hide-desc .item-desc{display:none}
+.desc-toggle{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--blue);background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-left:10px;vertical-align:middle}
+.desc-toggle .dot{width:32px;height:18px;border-radius:999px;background:#1e8e3e;position:relative;transition:background .2s}
+.desc-toggle .dot::after{content:'';position:absolute;top:2px;left:18px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s}
+body.hide-desc .desc-toggle .dot{background:#bcccdc}
+body.hide-desc .desc-toggle .dot::after{left:2px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{cursor:pointer;border-radius:10px;border:1px solid var(--line);padding:13px 18px;font-size:15px}
+.btn-main{background:var(--navy);color:#fff;border:none;font-weight:700;flex:2;min-width:180px}
+.btn-main:hover{background:var(--navy2)}
+.btn-sub{background:#fff;color:var(--navy);flex:1;min-width:130px;font-weight:600}
+.hint{font-size:12.5px;color:var(--mut);margin-top:8px}
+.alert-box{display:none;border:2px solid #d63031;background:#fdecea;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;color:#7a1f1f}
+.alert-box.show{display:block;animation:alertFlash 0.9s ease-in-out 4}
+.alert-box b{color:#b71c1c}
+.alert-box ul{margin:6px 0 0 20px}
+@keyframes alertFlash{0%,100%{box-shadow:0 0 0 0 rgba(214,48,49,0);}25%{box-shadow:0 0 0 5px rgba(214,48,49,.35);border-color:#ff0000}50%{box-shadow:0 0 0 0 rgba(214,48,49,0);}75%{box-shadow:0 0 0 5px rgba(214,48,49,.35);border-color:#ff0000}}
+.field.missing{border:2px solid #d63031!important;background:#fff0f0!important;animation:alertFlash 0.9s ease-in-out 4}
+.field.missing input{border-color:#d63031!important;background:#fff5f5!important}
+#resultLock{text-align:center;padding:8px}
+.lockbox{border:2px dashed #9fb3c8;border-radius:12px;padding:22px;background:var(--sky)}
+.lockbox h3{color:var(--navy);margin-bottom:6px}
+#diagText{filter:blur(6px);user-select:none;pointer-events:none;background:#f1f5f8;border-radius:8px;padding:10px;margin:10px 0;font-weight:800;font-size:18px;color:var(--navy)}
+#diagText.reveal{filter:none;user-select:auto;pointer-events:auto;background:#e3f0f7}
+.steps{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;margin-top:10px}
+.steps h4{color:var(--navy);margin:8px 0 4px;font-size:14.5px}
+.steps h4:first-child{margin-top:0}
+.steps li{margin-left:20px;margin-bottom:4px}
+.calc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#102a43;color:#d9e2ec;border-radius:8px;padding:10px 12px;font-size:13px;margin-top:8px;white-space:pre-wrap}
+.cause{background:#fffdf6;border:1px solid #e6c47a;border-left:5px solid #c99a1f;border-radius:0 10px 10px 0;padding:10px 12px;margin-top:10px;font-size:14px}
+.cause b{color:#7a5a00}
+.tag{display:inline-block;font-size:12px;border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;background:#e8f2f8;color:var(--navy2);border:1px solid var(--line)}
+.tag.hot{background:#fdecea;color:#922820;border-color:#f5c6c0}
+table.mini{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.mini th,table.mini td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+table.mini th{background:#f0f4f8;color:var(--navy)}
+footer{color:var(--mut);font-size:12px;text-align:center;padding:16px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+<div class="inner">
+<h1>血气分析 · 酸碱判读系统 <span>Blood Gas Interpreter</span></h1>
+<p>手动输入18项化验值（含参考值对照）。核心6项为必填：pH、PaCO₂、实际碳酸氢AB、标准碳酸氢SB、钠、氯。其余为选填，有值则纳入综合判断，无值则自动跳过。结果默认隐藏，点击后显示分步推理与可能病因。</p>
+</div>
+</header>
+
+<div class="wrap">
+
+<div class="card">
+<h2>第一步 · 输入化验值 <small>空白手动输入 · 右侧为参考值</small><button class="desc-toggle" id="descToggle" onclick="toggleDesc()"><span class="dot"></span><span id="descToggleText">隐藏说明</span></button></h2>
+<p class="sub">红色 ▲ 为高于上限，绿色 ▼ 为低于下限。PaCO₂临床按35~45判断（化验单印0~75范围过大，已校正并在下方脚注说明）。每项下方灰色小字为指标说明，可用右上角开关显示/隐藏。</p>
+
+<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">A组 · 电解质</h2>
+<div class="grid" id="groupA"></div>
+
+<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">B组 · 酸碱核心</h2>
+<div class="grid" id="groupB"></div>
+
+<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">C组 · 氧合与代谢</h2>
+<div class="grid" id="groupC"></div>
+
+<div class="btnrow">
+<button class="btn-main" onclick="analyze()">开始分析</button>
+<button class="btn-sub" onclick="resetAll()">清空重填</button>
+</div>
+<div class="alert-box" id="alertBox"></div>
+<p class="hint" id="err"></p>
+<p class="hint">注：△钾/△钠/△氯/△葡萄糖的“△”为床旁血气通道标识，意义同血清电解质。AG若留空但钠、氯、AB齐全，系统将自动计算：AG = Na − (Cl + HCO₃)。</p>
+</div>
+
+<div class="card" id="resultCard">
+<h2>第二步 · 判读结果 <small>默认隐藏，点击展开</small></h2>
+<div id="resultLock">
+<div class="lockbox" id="lockbox">
+<h3>分析尚未运行或结果已隐藏</h3>
+<p class="sub">输入核心6项后点“开始分析”，再点下方按钮查看诊断。</p>
+<div id="diagText">——</div>
+<button class="btn-main" id="revealBtn" onclick="toggleReveal()" disabled>点击显示诊断与分析</button>
+</div>
+<div id="detail" class="hidden">
+<div style="text-align:left">
+<div id="diagFinal" style="font-size:19px;font-weight:800;color:var(--navy)"></div>
+<div id="diagTags" style="margin:8px 0"></div>
+<div class="steps" id="steps"></div>
+<div class="calc" id="calc"></div>
+<div id="causes"></div>
+<table class="mini" id="sumTable"></table>
+<div class="btnrow">
+<button class="btn-sub" onclick="toggleReveal(true)">再次隐藏</button>
+<button class="btn-sub" onclick="window.print()">打印 / 存PDF</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>判读逻辑说明 <small>供核对</small></h2>
+<div class="steps">
+<ul>
+<li><b>第1步看pH：</b> &lt;7.35酸血症，&gt;7.45碱血症，之间为正常或代偿期。</li>
+<li><b>第2步看原发：</b> HCO₃⁻&lt;22为代酸趋向，&gt;27为代碱趋向；PaCO₂&gt;45为呼酸趋向，&lt;35为呼碱趋向。AB&gt;SB支持代碱/呼酸，AB&lt;SB支持代酸/呼碱。</li>
+<li><b>第3步看代偿公式：</b> 代酸Winter公式预期PaCO₂=1.5×HCO₃+8±2；代碱预期PaCO₂=0.7×HCO₃+21±2；急慢性呼酸呼碱用经典系数判断是否单纯或混合。</li>
+<li><b>第4步看AG：</b> AG&gt;20高AG代酸，AG&lt;8低AG（多为低蛋白/稀释/检验因素）。高AG时算Delta比值鉴别三重紊乱。</li>
+<li><b>第5步看辅助：</b> BE、乳酸、K/Cl、血糖、PaO₂/A-aDO₂、Hct/Ca辅助解释病因与氧合。</li>
+</ul>
+</div>
+<footer>本工具为教学辅助，不能替代临床诊断。请结合病史、FiO₂、通气状态、血清白蛋白综合判断。</footer>
+</div>
+
+</div>
+
+<script>
+const ITEMS=[
+ {id:'K',name:'△钾',unit:'mmol/L',ref:'3.5 ~ 4.9',low:3.5,high:4.9,req:false,group:'A',desc:'维持细胞膜电位与肌肉收缩；低钾多见于呕吐、利尿、代碱，高钾多见于肾衰、代酸。'},
+ {id:'Na',name:'△钠',unit:'mmol/L',ref:'138 ~ 146',low:138,high:146,req:true,group:'A',desc:'维持血浆渗透压；异常提示水钠失衡，也是计算AG的必需项。'},
+ {id:'Cl',name:'△氯',unit:'mmol/L',ref:'98 ~ 109',low:98,high:109,req:true,group:'A',desc:'与HCO₃⁻共同维持电中性；高氯倾向高氯性代酸，低氯倾向代碱。'},
+ {id:'iCa',name:'离子钙',unit:'mmol/L',ref:'1.12 ~ 1.32',low:1.12,high:1.32,req:false,group:'A',desc:'游离钙决定神经肌肉兴奋性与心肌收缩；碱中毒时降低易抽搐。'},
+ {id:'pH',name:'pH',unit:'—',ref:'7.350 ~ 7.450',low:7.35,high:7.45,req:true,group:'B',step:'0.001',desc:'血液酸碱度金标准；<7.35为酸血症，>7.45为碱血症，正常不能排除代偿期紊乱。'},
+ {id:'PaCO2',name:'二氧化碳分压',unit:'mmHg',ref:'35.0 ~ 45.0（临床）',low:35,high:45,req:true,group:'B',desc:'反映肺通气；升高为呼酸趋向（通气不足），降低为呼碱趋向（通气过度）。'},
+ {id:'AB',name:'实际碳酸氢 AB',unit:'mmol/L',ref:'22.0 ~ 27.0',low:22,high:27,req:true,group:'B',desc:'体内真实HCO₃⁻，受代谢与呼吸双重影响；降低倾向代酸，升高倾向代碱。'},
+ {id:'SB',name:'标准碳酸氢 SB',unit:'mmol/L',ref:'22.0 ~ 27.0',low:22,high:27,req:true,group:'B',desc:'排除呼吸因素后的代谢成分；AB＞SB支持代碱/呼酸，AB＜SB支持代酸/呼碱。'},
+ {id:'BE',name:'剩余碱 BE',unit:'mmol/L',ref:'-3.0 ~ 3.0',low:-3,high:3,req:false,group:'B',desc:'代谢性酸碱的定量指标；正值加大为碱过多，负值加大为酸过多。'},
+ {id:'BB',name:'全血缓冲碱 BB',unit:'mmol/L',ref:'45 ~ 55',low:45,high:55,req:false,group:'B',desc:'全部缓冲碱总和；反映机体缓冲储备是否耗竭。'},
+ {id:'TCO2',name:'总二氧化碳',unit:'mmol/L',ref:'24.0 ~ 29.0',low:24,high:29,req:false,group:'B',desc:'约等于HCO₃⁻+溶解CO₂，主要随HCO₃⁻升降，用于交叉核对AB。'},
+ {id:'ECFBE',name:'细胞外液剩余碱',unit:'mmol/L',ref:'-3.0 ~ 3.0',low:-3,high:3,req:false,group:'B',desc:'细胞外液层面的BE，意义同BE，更稳定，辅助判断代谢成分。'},
+ {id:'PaO2',name:'氧分压',unit:'mmHg',ref:'80.0 ~ 105.0',low:80,high:105,req:false,group:'C',desc:'动脉氧含量；升高多为吸氧状态，需结合FiO₂算氧合指数，禁忌单看好坏。'},
+ {id:'AaDO2',name:'肺-动脉氧压差',unit:'mmHg',ref:'25 ~ 75',low:25,high:75,req:false,group:'C',desc:'肺泡向血液弥散效率；明显升高提示V/Q失调、分流或弥散障碍。'},
+ {id:'AG',name:'阴离子隙 AG',unit:'mmol/L',ref:'10 ~ 20',low:10,high:20,req:false,group:'C',auto:true,desc:'未测定阴离子；>20为高AG代酸，<8低AG多为低蛋白/稀释。可留空自动计算。'},
+ {id:'Hct',name:'血球压积',unit:'%',ref:'38 ~ 51',low:38,high:51,req:false,group:'C',desc:'红细胞占比；降低为贫血/稀释致携氧下降，升高为浓缩/红细胞增多。'},
+ {id:'Glu',name:'△葡萄糖',unit:'mmol/L',ref:'3.9 ~ 6.1',low:3.9,high:6.1,req:false,group:'C',desc:'应激、输糖、糖尿病均可升高；低血糖也需警惕，注意与酮症酸中毒鉴别。'},
+ {id:'Lac',name:'乳酸',unit:'mmol/L',ref:'0.5 ~ 1.7',low:0.5,high:1.7,req:false,group:'C',desc:'组织灌注指标；>2提示无氧酵解、休克或缺氧，正常则暂无严重低灌注。'},
+];
+const vals={}; let lastResult=null; let revealed=false;
+
+function build(){
+ for(const g of ['A','B','C']){
+  const el=document.getElementById('group'+g);
+  ITEMS.filter(x=>x.group===g).forEach(it=>{
+   const d=document.createElement('div');d.className='field'+(it.req?' req':'');d.id='field_'+it.id;
+   d.innerHTML=`<div><div class="name">${it.name}${it.req?'<i>必填</i>':'<i class="opt">选填</i>'}</div><div class="ref">参考：${it.ref} ${it.unit}</div><div class="item-desc">${it.desc||''}</div><div class="flag" id="flag_${it.id}"></div></div>
+   <div><input id="in_${it.id}" type="number" step="${it.step||'0.1'}" placeholder="空白"><div class="unit">${it.unit}</div></div>`;
+   el.appendChild(d);
+   d.querySelector('input').addEventListener('input',()=>{liveFlag(it);clearMissing(it.id)});
+  });
+ }
+}
+function num(id){const v=parseFloat(document.getElementById('in_'+id).value);return isNaN(v)?null:v}
+function toggleDesc(){
+ document.body.classList.toggle('hide-desc');
+ const hidden=document.body.classList.contains('hide-desc');
+ document.getElementById('descToggleText').textContent=hidden?'显示说明':'隐藏说明';
+}
+function liveFlag(it){
+ const v=num(it.id);const f=document.getElementById('flag_'+it.id);
+ if(v===null){f.textContent='';f.className='flag';return}
+ if(v<it.low){f.textContent='▼ 低于下限';f.className='flag down'}
+ else if(v>it.high){f.textContent='▲ 高于上限';f.className='flag up'}
+ else{f.textContent='● 正常';f.className='flag ok'}
+}
+function resetAll(){
+ ITEMS.forEach(it=>{document.getElementById('in_'+it.id).value='';liveFlag(it);const f=document.getElementById('field_'+it.id);if(f)f.classList.remove('missing')});
+ document.getElementById('err').textContent='';
+ const ab=document.getElementById('alertBox');ab.classList.remove('show');ab.innerHTML='';
+ lastResult=null;revealed=false;
+ document.getElementById('diagText').textContent='——';document.getElementById('diagText').classList.remove('reveal');
+ document.getElementById('detail').classList.add('hidden');document.getElementById('revealBtn').disabled=true;
+}
+function clearMissing(id){
+ const f=document.getElementById('field_'+id);if(f)f.classList.remove('missing');
+ const need=['pH','PaCO2','AB','SB','Na','Cl'];
+ const still=need.filter(k=>num(k)===null);
+ if(!still.length){const ab=document.getElementById('alertBox');ab.classList.remove('show');ab.innerHTML='';document.getElementById('err').textContent=''}
+}
+function analyze(){
+ const err=document.getElementById('err');
+ const ab=document.getElementById('alertBox');
+ const need=['pH','PaCO2','AB','SB','Na','Cl'];
+ const miss=need.filter(k=>num(k)===null);
+ ITEMS.forEach(it=>{const f=document.getElementById('field_'+it.id);if(f)f.classList.remove('missing')});
+ if(miss.length){
+  const names=miss.map(k=>{const it=ITEMS.find(x=>x.id===k);return `${it.name}（参考 ${it.ref} ${it.unit}）`});
+  ab.innerHTML=`<b>⚠ 必填项未填写（共 ${miss.length} 项）：</b><ul>${names.map(n=>`<li>${n}</li>`).join('')}</ul><div style="margin-top:6px;font-size:12.5px">请补填红色闪烁框对应的指标后再点“开始分析”。</div>`;
+  ab.classList.remove('show');void ab.offsetWidth;ab.classList.add('show');
+  err.textContent='';
+  miss.forEach(k=>{const f=document.getElementById('field_'+k);if(f){f.classList.remove('missing');void f.offsetWidth;f.classList.add('missing')}});
+  const first=document.getElementById('field_'+miss[0]);if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+  const firstInput=document.getElementById('in_'+miss[0]);if(firstInput)firstInput.focus({preventScroll:true});
+  return}
+ ab.classList.remove('show');ab.innerHTML='';
+ ITEMS.forEach(it=>liveFlag(it));
+ const v={};ITEMS.forEach(it=>v[it.id]=num(it.id));
+ // 自动AG
+ let agAuto=null;
+ if(v.AG===null&&v.Na!==null&&v.Cl!==null&&v.AB!==null){agAuto=v.Na-(v.Cl+v.AB);v.AGcalc=agAuto}
+ const agEff=v.AG!==null?v.AG:agAuto;
+ const r=interpret(v,agEff,agAuto);
+ lastResult={v,agEff,agAuto,r};revealed=false;
+ document.getElementById('diagText').textContent=r.diagnosis;
+ document.getElementById('diagText').classList.remove('reveal');
+ document.getElementById('detail').classList.add('hidden');
+ document.getElementById('revealBtn').disabled=false;
+ document.getElementById('revealBtn').textContent='点击显示诊断与分析';
+ document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
+}
+function toggleReveal(forceHide){
+ if(!lastResult)return;
+ if(forceHide===true){revealed=false}
+ else revealed=!revealed;
+ document.getElementById('diagText').classList.toggle('reveal',revealed);
+ document.getElementById('detail').classList.toggle('hidden',!revealed);
+ document.getElementById('revealBtn').textContent=revealed?'再次隐藏':'点击显示诊断与分析';
+ if(revealed)renderDetail();
+}
+function interpret(v,agEff,agAuto){
+ const ph=v.pH,paco2=v.PaCO2,hco3=v.AB,sb=v.SB;
+ const steps=[];const tags=[];const causes=[];let calc='';
+ const phS=ph<7.35?'酸血症（pH<7.35）':ph>7.45?'碱血症（pH>7.45）':'正常（代偿期可能）';
+ steps.push(`<h4>1. pH定性</h4><li>pH ${ph.toFixed(3)} → <b>${phS}</b></li>`);
+ const metLow=hco3<22,metHigh=hco3>27,respHigh=paco2>45,respLow=paco2<35;
+ let s2=`<h4>2. 原发趋向</h4><li>HCO₃⁻(AB) ${hco3} ${metLow?'↓ 代酸趋向':metHigh?'↑ 代碱趋向':'正常'}；PaCO₂ ${paco2} ${respHigh?'↑ 呼酸趋向':respLow?'↓ 呼碱趋向':'正常'}</li>`;
+ const diff=hco3-sb;
+ s2+=`<li>AB ${hco3} vs SB ${sb}：${diff>0?`AB＞SB（+${diff.toFixed(1)}），支持代谢性碱中毒 / 呼吸性酸中毒` : diff<0?`AB＜SB（${diff.toFixed(1)}），支持代谢性酸中毒 / 呼吸性碱中毒`:'AB≈SB，无明显急慢性呼吸成分别离'}</li>`;
+ steps.push(s2);
+ // 代偿公式
+ let comp=[];
+ if(metLow){
+  const exp=1.5*hco3+8;comp.push(`代酸Winter公式：预期PaCO₂ = 1.5×${hco3}+8 = ${exp.toFixed(1)}±2 → ${(exp-2).toFixed(1)}~${(exp+2).toFixed(1)}，实测${paco2} ${paco2>exp+2?'偏高，提示合并呼吸性酸中毒':paco2<exp-2?'偏低，提示合并呼吸性碱中毒':'符合单纯代酸代偿'}`);
+ }
+ if(metHigh){
+  const exp=0.7*hco3+21;comp.push(`代碱公式：预期PaCO₂ = 0.7×${hco3}+21 = ${exp.toFixed(1)}±2 → ${(exp-2).toFixed(1)}~${(exp+2).toFixed(1)}，实测${paco2} ${paco2>exp+2?'偏高，提示合并呼吸性酸中毒':paco2<exp-2?'偏低，提示合并呼吸性碱中毒':'符合单纯代碱代偿'}`);
+ }
+ if(respHigh){
+  const acute=24+(paco2-40)*0.1, chronic=24+(paco2-40)*0.35;
+  comp.push(`呼酸预计HCO₃⁻：急性≈${acute.toFixed(1)}，慢性≈${chronic.toFixed(1)}，实测${hco3} ${hco3>chronic+1?'高于慢性预计，提示合并代碱':hco3<acute-1?'低于急性预计，提示合并代酸':'介于急慢性之间'}`);
+ }
+ if(respLow){
+  const acute=24-(40-paco2)*0.2, chronic=24-(40-paco2)*0.5;
+  comp.push(`呼碱预计HCO₃⁻：急性≈${acute.toFixed(1)}，慢性≈${chronic.toFixed(1)}，实测${hco3} ${hco3<chronic-1?'低于慢性预计，提示合并代酸':hco3>acute+1?'高于急性预计，提示合并代碱':'介于急慢性之间'}`);
+ }
+ if(!comp.length)comp.push('HCO₃⁻与PaCO₂均在正常范围内或仅边界轻度偏移，无需套用失代偿公式，重点看AB/SB与AG。');
+ steps.push(`<h4>3. 代偿验证</h4><li>${comp.join('</li><li>')}</li>`);
+ // AG
+ let agTxt='';
+ if(agEff!==null&&agEff!==undefined){
+  const st=agEff>20?'明显升高（高AG代酸）':agEff>=10?'正常':'降低';
+  agTxt=`AG ${agEff.toFixed(1)}${agAuto!==null&&v.AG===null?`（自动计算 Na ${v.Na}−(Cl ${v.Cl}+HCO₃ ${v.AB})）`:''} → ${st}`;
+  if(agEff>20){
+   const dr=(agEff-12)/(24-hco3);const dg=(agEff-12)+(hco3-24);
+   agTxt+=`；Delta比值≈${isFinite(dr)?dr.toFixed(2):'—'}，Delta间隙≈${dg.toFixed(1)}（>6提示合并代碱，<-6提示合并高氯代酸）`;
+  }
+  if(agEff<8)agTxt+='；低AG多见于低白蛋白/血液稀释/检验因素，少见为阳离子副蛋白';
+ } else agTxt='AG无数据（钠氯AB不全或未填写），跳过AG分析。';
+ steps.push(`<h4>4. AG与电解质</h4><li>${agTxt}</li><li>Na ${v.Na}，Cl ${v.Cl}（${v.Cl>109?'偏高氯，倾向高氯性代酸/抵消AG':v.Cl<98?'偏低氯，倾向代碱':'正常'}），K ${v.K??'—'}${v.K!==null?(v.K<3.5?'↓ 代碱/利尿呕吐常见低钾':v.K>5.5?'↑ 代酸/肾衰常见高钾':'正常'):''}</li>`);
+ // 辅助
+ const aux=[];
+ if(v.BE!==null)aux.push(`BE ${v.BE} ${v.BE>3?'正值加大（碱过多）':v.BE<-3?'负值加大（酸过多）':'正常'}`);
+ if(v.Lac!==null)aux.push(`乳酸 ${v.Lac} ${v.Lac>2?'↑ 组织低灌注/缺氧可能':v.Lac>1.7?'临界高':'正常，无明显休克缺氧'}`);
+ if(v.PaO2!==null)aux.push(`PaO₂ ${v.PaO2} ${v.PaO2>105?'↑ 多为吸氧状态，需结合FiO₂算氧合指数':v.PaO2<80?'↓ 低氧血症':'正常'}`);
+ if(v.AaDO2!==null)aux.push(`A-aDO₂ ${v.AaDO2} ${v.AaDO2>75?'↑ 肺换气障碍（V/Q失调/分流/弥散障碍）':v.AaDO2<10?'偏低':'正常'}`);
+ if(v.Glu!==null)aux.push(`血糖 ${v.Glu} ${v.Glu>6.1?'↑ 应激性高血糖/糖尿病可能':v.Glu<3.9?'↓ 低血糖':'正常'}`);
+ if(v.Hct!==null)aux.push(`Hct ${v.Hct}% ${v.Hct<38?'↓ 贫血/稀释，携氧下降':v.Hct>51?'↑ 浓缩/红细胞增多':'正常'}`);
+ if(v.iCa!==null)aux.push(`离子钙 ${v.iCa} ${v.iCa<1.12?'↓':v.iCa>1.32?'↑':'正常偏'+(v.iCa<1.18?'低':'中')}`);
+ if(v.TCO2!==null)aux.push(`TCO₂ ${v.TCO2} 与AB趋势${Math.abs(v.TCO2-hco3)<3?'一致':'分离，注意检验'}`);
+ if(!aux.length)aux.push('选填辅助指标均为空，仅以核心6项判读。');
+ steps.push(`<h4>5. 氧合与代谢辅助</h4><li>${aux.join('</li><li>')}</li>`);
+ // 诊断综合
+ let diag='';
+ const bothUp=metHigh&&respHigh, bothDown=metLow&&respLow;
+ if(ph>=7.35&&ph<=7.45){
+  if(!metLow&&!metHigh&&!respLow&&respHigh&&hco3<=27.5)diag='大致正常，轻度CO₂潴留倾向（代偿期）';
+  else if(bothUp)diag='pH正常型混合倾向：代谢性碱中毒倾向 + 呼吸性酸中毒倾向（代偿期）';
+  else if(bothDown)diag='pH正常型混合倾向：代谢性酸中毒倾向 + 呼吸性碱中毒倾向（代偿期）';
+  else if(metLow&&!respLow&&!respHigh)diag='代偿期代谢性酸中毒可疑（pH已代偿）';
+  else if(metHigh&&!respLow&&!respHigh)diag='代偿期代谢性碱中毒可疑（pH已代偿）';
+  else if(respHigh&&!metLow&&!metHigh)diag='代偿期呼吸性酸中毒可疑（pH已代偿）';
+  else if(respLow&&!metLow&&!metHigh)diag='代偿期呼吸性碱中毒可疑（pH已代偿）';
+  else diag='酸碱大致平衡，边界值需动态复查';
+ } else if(ph<7.35){
+  if(metLow&&(paco2<=45))diag='代谢性酸中毒（失代偿）为主';
+  else if(respHigh&&(hco3>=22))diag='呼吸性酸中毒（失代偿）为主';
+  else if(metLow&&respHigh)diag='混合性酸中毒：代谢性酸中毒 + 呼吸性酸中毒';
+  else diag='酸血症，混合因素待查';
+  if(agEff>20)diag+='，高AG型';
+ } else {
+  if(metHigh&&(paco2>=35))diag='代谢性碱中毒（失代偿）为主';
+  else if(respLow&&(hco3<=27))diag='呼吸性碱中毒（失代偿）为主';
+  else if(metHigh&&respLow)diag='混合性碱中毒：代谢性碱中毒 + 呼吸性碱中毒';
+  else diag='碱血症，混合因素待查';
+ }
+ if(agEff!==null&&agEff<8)diag+='（合并低AG，需查白蛋白/稀释）';
+ // tags
+ if(diag.includes('代酸')||diag.includes('代谢性酸中毒'))tags.push('代谢性酸中毒');
+ if(diag.includes('代碱')||diag.includes('代谢性碱中毒'))tags.push('代谢性碱中毒');
+ if(diag.includes('呼酸')||diag.includes('呼吸性酸中毒'))tags.push('呼吸性酸中毒');
+ if(diag.includes('呼碱')||diag.includes('呼吸性碱中毒'))tags.push('呼吸性碱中毒');
+ if(agEff>20)tags.push('高AG');
+ if(agEff!==null&&agEff<8)tags.push('低AG');
+ if(v.AaDO2!==null&&v.AaDO2>75)tags.push('换气障碍');
+ // causes
+ const C={
+  '代谢性酸中毒':['严重腹泻、肠瘘、胰瘘、胆道引流致NaHCO₃丢失','肾衰竭/肾小管功能异常、乙酰唑胺','缺氧低灌注致乳酸性酸中毒（查乳酸/循环）','糖尿病酮症、饥饿、酒精性酮症','外源固定酸：阿司匹林、氯化铵、盐酸精氨酸','高钾血症致H⁺外移'],
+  '代谢性碱中毒':['剧烈呕吐、长期胃肠减压丢H⁺丢Cl⁻（低氯低钾性）','袢利尿剂/噻嗪类、醛固酮增多','过量NaHCO₃、乳酸钠/乙酸钠、大量库存血（枸橼酸盐）','低钾血症：H⁺内移+肾排H⁺增多，可见反常性酸性尿'],
+  '呼吸性酸中毒':['中枢抑制：颅脑损伤、麻醉/镇静过量、呼吸机不当','气道梗阻：喉痉挛水肿、异物、溺水（急性）','COPD、哮喘、胸廓畸形、呼吸肌麻痹、气胸积液（慢性）','肺实质：重症肺炎、肺水肿、肺纤维化；环境CO₂过高'],
+  '呼吸性碱中毒':['中枢刺激：脑炎外伤肿瘤、癔症通气过度、水杨酸、呼吸机潮气量过大','高热、甲亢、疼痛创伤、革兰阴性菌败血症致代谢亢进','低氧血症/低环境氧刺激过度通气']
+ };
+ tags.forEach(t=>{if(C[t])causes.push({t,list:C[t]})});
+ if(v.AaDO2!==null&&v.AaDO2>75)causes.push({t:'肺换气障碍（A-aDO₂升高）',list:['V/Q比例失调、分流、弥散障碍','查FiO₂并算PaO₂/FiO₂、查胸片/肺部体征','Hct低会加重氧供不足']});
+ if(agEff!==null&&agEff<8)causes.push({t:'低AG解释',list:['首先考虑低白蛋白血症、补液稀释（结合Hct/总蛋白）','复查排除检验误差','少见：多发性骨髓瘤阳离子副蛋白、高钙/高镁/锂']});
+ if(v.Glu!==null&&v.Glu>6.1)causes.push({t:'血糖升高',list:['应激性高血糖（感染创伤手术激素）','糖尿病/输糖，查空腹血糖+糖化']});
+ if(v.Lac!==null&&v.Lac<=1.7)causes.push({t:'乳酸正常',list:['暂无组织严重低灌注/休克证据，利好']});
+ if(v.Lac!==null&&v.Lac>2)causes.push({t:'乳酸升高',list:['循环障碍、缺氧、感染，优先纠正灌注']});
+ calc=`输入：pH ${ph} | PaCO₂ ${paco2} | AB/HCO₃ ${hco3} | SB ${sb} | Na ${v.Na} | Cl ${v.Cl} | AG ${agEff!==null?agEff.toFixed(1):'—'}\n`+comp.join('\n');
+ return {diagnosis:diag,steps,tags,causes,calc};
+}
+function renderDetail(){
+ const {v,agEff,agAuto,r}=lastResult;
+ document.getElementById('diagFinal').textContent='初步判断：'+r.diagnosis;
+ document.getElementById('diagTags').innerHTML=r.tags.map(t=>`<span class="tag ${/高AG|换气|低AG/.test(t)?'hot':''}">${t}</span>`).join('')||'<span class="tag">大致平衡</span>';
+ document.getElementById('steps').innerHTML='<ol style="list-style:none;padding:0">'+r.steps.map(s=>`<li>${s}</li>`).join('')+'</ol>';
+ document.getElementById('calc').textContent=r.calc;
+ document.getElementById('causes').innerHTML=r.causes.map(c=>`<div class="cause"><b>【${c.t}】可能原因：</b><ul>${c.list.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')||'<div class="cause"><b>暂无特定病因指向，</b>建议动态复查并结合病史。</div>';
+ let rows=ITEMS.map(it=>{
+  const val=v[it.id];const disp=val===null?'—':val;
+  let flag='—';
+  if(val!==null)flag=val<it.low?'↓ 低':val>it.high?'↑ 高':'正常';
+  return `<tr><td>${it.name}</td><td><b>${disp}</b> ${it.unit}</td><td>${it.ref}</td><td>${flag}</td></tr>`;
+ });
+ if(agAuto!==null&&v.AG===null)rows.push(`<tr><td>AG（自动计算）</td><td><b>${agAuto.toFixed(1)}</b> mmol/L</td><td>10 ~ 20</td><td>${agAuto<10?'↓ 低':agAuto>20?'↑ 高':'正常'}</td></tr>`);
+ document.getElementById('sumTable').innerHTML='<tr><th>指标</th><th>输入值</th><th>参考值</th><th>判定</th></tr>'+rows.join('');
+}
+build();
+</script>
+</body>
+</html>
