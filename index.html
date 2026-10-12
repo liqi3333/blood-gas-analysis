@@ -7,148 +7,187 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#102a43; --navy2:#16406b; --blue:#14739e; --sky:#e8f2f8;
-  --bg:#eef2f6; --card:#ffffff; --line:#d9e2ec; --mut:#62748a;
-  --up:#c0392b; --down:#1e8e3e; --ok:#486581; --warnbg:#fef3e6;
+  --bg:#ffffff; --bg-alt:#f5f5f7; --card:#ffffff;
+  --text:#1d1d1f; --secondary:#6e6e73; --line:#d2d2d7;
+  --blue:#0071e3; --blue-hover:#0077ed; --blue-soft:#eef5ff;
+  --red:#d70015; --red-bg:#fff1f1; --green:#1d8127;
+  --input-bg:#ffffff; --pill-gray:#e8e8ed;
+  --shadow:0 4px 24px rgba(0,0,0,.06);
+  --code-bg:#1d1d1f; --code-text:#f5f5f7;
+  --nav-bg:rgba(255,255,255,.8);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:#243b53;line-height:1.65}
-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--blue) 100%);color:#fff;padding:26px 20px 22px}
-header .inner{max-width:980px;margin:0 auto}
-header h1{font-size:22px;letter-spacing:.5px}
-header h1 span{font-weight:400;opacity:.85;font-size:15px;margin-left:8px}
-header p{font-size:13px;opacity:.85;margin-top:6px;max-width:760px}
-.wrap{max-width:980px;margin:0 auto;padding:16px 14px 60px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(16,42,67,.06)}
-.card h2{font-size:16px;color:var(--navy);border-left:5px solid var(--blue);padding-left:10px;margin-bottom:4px}
-.card h2 small{color:var(--mut);font-weight:400;font-size:12.5px;margin-left:8px}
-.sub{font-size:12.5px;color:var(--mut);margin-bottom:12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:720px){.grid{grid-template-columns:1fr}}
-.field{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfdff}
-.field.req{border-color:var(--blue);background:#f0f7fc}
-.field .name{font-size:14.5px;font-weight:650}
-.field .name i{font-style:normal;font-size:11px;background:var(--navy);color:#fff;border-radius:5px;padding:1px 6px;margin-left:6px}
-.field .name i.opt{background:#bcccdc;color:#334e68}
-.field .ref{font-size:12px;color:var(--mut)}
-.field input{width:110px;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:15px;text-align:center;background:#fff}
-.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(20,115,158,.15)}
-.unit{font-size:12px;color:var(--mut);text-align:center;margin-top:2px}
-.flag{font-size:12.5px;font-weight:700;min-height:18px;text-align:center}
-.flag.up{color:var(--up)} .flag.down{color:var(--down)} .flag.ok{color:#829ab1;font-weight:400}
-.item-desc{font-size:12px;color:#8a9aad;line-height:1.55;margin-top:4px}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000000; --bg-alt:#161617; --card:#1d1d1f;
+    --text:#f5f5f7; --secondary:#a1a1a6; --line:#424245;
+    --blue:#2997ff; --blue-hover:#53a9ff; --blue-soft:#0a2a4a;
+    --red:#ff6961; --red-bg:#3a1214; --green:#30d158;
+    --input-bg:#2c2c2e; --pill-gray:#2c2c2e;
+    --shadow:0 4px 24px rgba(0,0,0,.45);
+    --code-bg:#000000; --code-text:#f5f5f7;
+    --nav-bg:rgba(0,0,0,.7);
+  }
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.topnav{position:sticky;top:0;z-index:50;background:var(--nav-bg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:980px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.nav-title{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.nav-title span{font-weight:400;color:var(--secondary);font-size:13px;margin-left:8px}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+.nav-links a:hover{color:var(--blue)}
+.hero{max-width:980px;margin:0 auto;padding:56px 20px 28px;text-align:center}
+.hero h1{font-size:44px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+.hero h1 span{color:var(--secondary);font-weight:600}
+.hero-sub{margin:16px auto 0;max-width:680px;font-size:17px;color:var(--secondary)}
+.hero-pills{margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.hero-pills span{font-size:13px;background:var(--bg-alt);border:1px solid var(--line);color:var(--text);border-radius:980px;padding:6px 14px}
+.page{max-width:980px;margin:0 auto;padding:0 20px 60px}
+.panel{background:var(--bg-alt);border-radius:22px;padding:28px;margin-top:20px}
+.panel.white{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.panel-head h2{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.panel-head h2 small{display:block;font-size:14px;font-weight:400;color:var(--secondary);margin-top:4px}
+.sub{font-size:14px;color:var(--secondary);margin:8px 0 16px}
+.group-title{font-size:17px;font-weight:700;margin:22px 0 10px;color:var(--text)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.hero h1{font-size:32px}}
+.field{display:grid;grid-template-columns:1fr 118px;gap:10px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.field.req{border-color:var(--blue)}
+.field .name{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.field .name i{font-style:normal;font-size:11px;background:var(--blue);color:#fff;border-radius:980px;padding:2px 8px;margin-left:8px;font-weight:700;vertical-align:middle}
+.field .name i.opt{background:var(--pill-gray);color:var(--secondary)}
+.field .ref{font-size:13px;color:var(--secondary);margin-top:2px}
+.item-desc{font-size:12.5px;color:var(--secondary);line-height:1.6;margin-top:6px}
 body.hide-desc .item-desc{display:none}
-.desc-toggle{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--blue);background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-left:10px;vertical-align:middle}
-.desc-toggle .dot{width:32px;height:18px;border-radius:999px;background:#1e8e3e;position:relative;transition:background .2s}
-.desc-toggle .dot::after{content:'';position:absolute;top:2px;left:18px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s}
-body.hide-desc .desc-toggle .dot{background:#bcccdc}
-body.hide-desc .desc-toggle .dot::after{left:2px}
-.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-button{cursor:pointer;border-radius:10px;border:1px solid var(--line);padding:13px 18px;font-size:15px}
-.btn-main{background:var(--navy);color:#fff;border:none;font-weight:700;flex:2;min-width:180px}
-.btn-main:hover{background:var(--navy2)}
-.btn-sub{background:#fff;color:var(--navy);flex:1;min-width:130px;font-weight:600}
-.hint{font-size:12.5px;color:var(--mut);margin-top:8px}
-.alert-box{display:none;border:2px solid #d63031;background:#fdecea;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;color:#7a1f1f}
-.alert-box.show{display:block;animation:alertFlash 0.9s ease-in-out 4}
-.alert-box b{color:#b71c1c}
-.alert-box ul{margin:6px 0 0 20px}
-@keyframes alertFlash{0%,100%{box-shadow:0 0 0 0 rgba(214,48,49,0);}25%{box-shadow:0 0 0 5px rgba(214,48,49,.35);border-color:#ff0000}50%{box-shadow:0 0 0 0 rgba(214,48,49,0);}75%{box-shadow:0 0 0 5px rgba(214,48,49,.35);border-color:#ff0000}}
-.field.missing{border:2px solid #d63031!important;background:#fff0f0!important;animation:alertFlash 0.9s ease-in-out 4}
-.field.missing input{border-color:#d63031!important;background:#fff5f5!important}
-#resultLock{text-align:center;padding:8px}
-.lockbox{border:2px dashed #9fb3c8;border-radius:12px;padding:22px;background:var(--sky)}
-.lockbox h3{color:var(--navy);margin-bottom:6px}
-#diagText{filter:blur(6px);user-select:none;pointer-events:none;background:#f1f5f8;border-radius:8px;padding:10px;margin:10px 0;font-weight:800;font-size:18px;color:var(--navy)}
-#diagText.reveal{filter:none;user-select:auto;pointer-events:auto;background:#e3f0f7}
-.steps{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;margin-top:10px}
-.steps h4{color:var(--navy);margin:8px 0 4px;font-size:14.5px}
+.field input{width:118px;padding:11px 10px;border:1.5px solid var(--line);border-radius:12px;font-size:17px;text-align:center;background:var(--input-bg);color:var(--text)}
+.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,113,227,.18)}
+.field input::placeholder{color:var(--secondary);opacity:.6}
+.unit{font-size:12px;color:var(--secondary);text-align:center;margin-top:4px}
+.flag{font-size:13px;font-weight:700;min-height:20px;margin-top:6px}
+.flag.up{color:var(--red)} .flag.down{color:var(--green)} .flag.ok{color:var(--secondary);font-weight:400}
+.desc-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:980px;padding:8px 14px;font-size:14px;font-weight:600;cursor:pointer}
+.desc-toggle .dot{width:40px;height:24px;border-radius:980px;background:var(--green);position:relative;transition:background .2s;flex:none}
+.desc-toggle .dot::after{content:'';position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+body.hide-desc .desc-toggle .dot{background:#c7c7cc}
+body.hide-desc .desc-toggle .dot::after{left:3px}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+button{cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff;border:none;border-radius:980px;padding:13px 32px;font-size:17px;font-weight:600;flex:2;min-width:200px}
+.btn-primary:hover{background:var(--blue-hover)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{background:var(--pill-gray);color:var(--blue);border:none;border-radius:980px;padding:13px 24px;font-size:17px;font-weight:600;flex:1;min-width:150px}
+.hint{font-size:13px;color:var(--secondary);margin-top:10px}
+.alert-box{display:none;background:var(--red-bg);border:1.5px solid var(--red);color:var(--text);border-radius:16px;padding:16px 18px;margin-top:16px;font-size:15px}
+.alert-box.show{display:block;animation:alertPulse 0.9s ease-in-out 4}
+.alert-box b{color:var(--red)}
+.alert-box ul{margin:8px 0 0 20px}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(215,0,21,0)}25%,75%{box-shadow:0 0 0 6px rgba(215,0,21,.15)}50%{box-shadow:0 0 0 0 rgba(215,0,21,0)}}
+.field.missing{border:2px solid var(--red)!important;background:var(--red-bg)!important;animation:alertPulse 0.9s ease-in-out 4}
+.field.missing input{border-color:var(--red)!important}
+#resultLock{text-align:center}
+.lockbox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:32px 24px;box-shadow:var(--shadow)}
+.lockbox h3{font-size:21px;font-weight:700;margin-bottom:6px}
+#diagText{filter:blur(8px);user-select:none;pointer-events:none;background:var(--bg-alt);border-radius:14px;padding:16px;margin:16px 0;font-weight:700;font-size:20px}
+#diagText.reveal{filter:none;user-select:auto;pointer-events:auto;background:var(--blue-soft)}
+.steps{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:15px;margin-top:14px}
+.panel .steps{background:var(--bg)}
+.steps h4{margin:10px 0 4px;font-size:15px}
 .steps h4:first-child{margin-top:0}
 .steps li{margin-left:20px;margin-bottom:4px}
-.calc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#102a43;color:#d9e2ec;border-radius:8px;padding:10px 12px;font-size:13px;margin-top:8px;white-space:pre-wrap}
-.cause{background:#fffdf6;border:1px solid #e6c47a;border-left:5px solid #c99a1f;border-radius:0 10px 10px 0;padding:10px 12px;margin-top:10px;font-size:14px}
-.cause b{color:#7a5a00}
-.tag{display:inline-block;font-size:12px;border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;background:#e8f2f8;color:var(--navy2);border:1px solid var(--line)}
-.tag.hot{background:#fdecea;color:#922820;border-color:#f5c6c0}
-table.mini{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-table.mini th,table.mini td{border:1px solid var(--line);padding:6px 8px;text-align:left}
-table.mini th{background:#f0f4f8;color:var(--navy)}
-footer{color:var(--mut);font-size:12px;text-align:center;padding:16px}
+#diagFinal{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.calc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code-bg);color:var(--code-text);border-radius:14px;padding:14px 16px;font-size:13px;margin-top:12px;white-space:pre-wrap}
+.cause{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:0 14px 14px 0;padding:12px 16px;margin-top:12px;font-size:14.5px}
+.tag{display:inline-block;font-size:13px;border-radius:980px;padding:4px 12px;margin:2px 6px 2px 0;background:var(--bg-alt);color:var(--text);border:1px solid var(--line)}
+.tag.hot{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+table.mini{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px;background:var(--card);border-radius:14px;overflow:hidden}
+table.mini th,table.mini td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+table.mini th{background:var(--bg-alt)}
+footer.site{color:var(--secondary);font-size:12.5px;text-align:center;padding:28px 20px 40px}
 .hidden{display:none!important}
 </style>
 </head>
 <body>
-<header>
-<div class="inner">
-<h1>血气分析 · 酸碱判读系统 <span>Blood Gas Interpreter</span></h1>
-<p>手动输入18项化验值（含参考值对照）。核心6项为必填：pH、PaCO₂、实际碳酸氢AB、标准碳酸氢SB、钠、氯。其余为选填，有值则纳入综合判断，无值则自动跳过。结果默认隐藏，点击后显示分步推理与可能病因。</p>
+<nav class="topnav">
+<div class="nav-inner">
+<div class="nav-title">血气分析 <span>Blood Gas</span></div>
+<div class="nav-links"><a href="#input">输入</a><a href="#result">结果</a><a href="#logic">逻辑说明</a></div>
 </div>
+</nav>
+
+<header class="hero">
+<h1>血气分析。<br><span>酸碱一目了然。</span></h1>
+<p class="hero-sub">手动输入 18 项化验值，核心 6 项必填：pH、PaCO₂、实际碳酸氢 AB、标准碳酸氢 SB、钠、氯。其余选填，有值纳入判断，无值自动跳过。结果默认隐藏，点击后显示分步推理与可能病因。</p>
+<div class="hero-pills"><span>18 项全收录</span><span>6 项必填</span><span>AG 可自动计算</span><span>深色模式适配</span></div>
 </header>
 
-<div class="wrap">
+<main class="page">
 
-<div class="card">
-<h2>第一步 · 输入化验值 <small>空白手动输入 · 右侧为参考值</small><button class="desc-toggle" id="descToggle" onclick="toggleDesc()"><span class="dot"></span><span id="descToggleText">隐藏说明</span></button></h2>
-<p class="sub">红色 ▲ 为高于上限，绿色 ▼ 为低于下限。PaCO₂临床按35~45判断（化验单印0~75范围过大，已校正并在下方脚注说明）。每项下方灰色小字为指标说明，可用右上角开关显示/隐藏。</p>
-
-<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">A组 · 电解质</h2>
+<section class="panel" id="input">
+<div class="panel-head">
+<div><h2>输入化验值<small>空白手动输入 · 右侧为参考值</small></h2></div>
+<button class="desc-toggle" id="descToggle" onclick="toggleDesc()"><span class="dot"></span><span id="descToggleText">隐藏说明</span></button>
+</div>
+<p class="sub">红色 ▲ 为高于上限，绿色 ▼ 为低于下限。PaCO₂临床按 35~45 判断（化验单印 0~75 范围过大，已校正）。每项下方灰色小字为指标说明，可用右上角开关显示 / 隐藏。</p>
+<div class="group-title">电解质</div>
 <div class="grid" id="groupA"></div>
-
-<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">B组 · 酸碱核心</h2>
+<div class="group-title">酸碱核心</div>
 <div class="grid" id="groupB"></div>
-
-<h2 style="border-color:#829ab1;font-size:14px;margin-top:14px">C组 · 氧合与代谢</h2>
+<div class="group-title">氧合与代谢</div>
 <div class="grid" id="groupC"></div>
-
 <div class="btnrow">
-<button class="btn-main" onclick="analyze()">开始分析</button>
-<button class="btn-sub" onclick="resetAll()">清空重填</button>
+<button class="btn-primary" onclick="analyze()">开始分析</button>
+<button class="btn-secondary" onclick="resetAll()">清空重填</button>
 </div>
 <div class="alert-box" id="alertBox"></div>
 <p class="hint" id="err"></p>
-<p class="hint">注：△钾/△钠/△氯/△葡萄糖的“△”为床旁血气通道标识，意义同血清电解质。AG若留空但钠、氯、AB齐全，系统将自动计算：AG = Na − (Cl + HCO₃)。</p>
-</div>
+<p class="hint">注：△钾 / △钠 / △氯 / △葡萄糖的“△”为床旁血气通道标识，意义同血清电解质。AG 若留空但钠、氯、AB 齐全，系统将自动计算：AG = Na − (Cl + HCO₃)。</p>
+</section>
 
-<div class="card" id="resultCard">
-<h2>第二步 · 判读结果 <small>默认隐藏，点击展开</small></h2>
+<section class="panel white" id="resultCard">
+<div id="result"></div>
+<div class="panel-head"><div><h2>判读结果<small>默认隐藏，点击展开</small></h2></div></div>
 <div id="resultLock">
 <div class="lockbox" id="lockbox">
-<h3>分析尚未运行或结果已隐藏</h3>
-<p class="sub">输入核心6项后点“开始分析”，再点下方按钮查看诊断。</p>
+<h3>分析尚未运行</h3>
+<p class="sub">输入核心 6 项后点“开始分析”，再点下方按钮查看诊断。</p>
 <div id="diagText">——</div>
-<button class="btn-main" id="revealBtn" onclick="toggleReveal()" disabled>点击显示诊断与分析</button>
+<button class="btn-primary" id="revealBtn" onclick="toggleReveal()" disabled>点击显示诊断与分析</button>
 </div>
 <div id="detail" class="hidden">
 <div style="text-align:left">
-<div id="diagFinal" style="font-size:19px;font-weight:800;color:var(--navy)"></div>
-<div id="diagTags" style="margin:8px 0"></div>
+<div id="diagFinal"></div>
+<div id="diagTags" style="margin:10px 0"></div>
 <div class="steps" id="steps"></div>
 <div class="calc" id="calc"></div>
 <div id="causes"></div>
 <table class="mini" id="sumTable"></table>
 <div class="btnrow">
-<button class="btn-sub" onclick="toggleReveal(true)">再次隐藏</button>
-<button class="btn-sub" onclick="window.print()">打印 / 存PDF</button>
+<button class="btn-secondary" onclick="toggleReveal(true)">再次隐藏</button>
+<button class="btn-secondary" onclick="window.print()">打印 / 存 PDF</button>
 </div>
 </div>
 </div>
 </div>
-</div>
+</section>
 
-<div class="card">
-<h2>判读逻辑说明 <small>供核对</small></h2>
+<section class="panel" id="logic">
+<div id="logic-anchor"></div>
+<div class="panel-head"><div><h2>判读逻辑<small>供核对</small></h2></div></div>
 <div class="steps">
 <ul>
-<li><b>第1步看pH：</b> &lt;7.35酸血症，&gt;7.45碱血症，之间为正常或代偿期。</li>
-<li><b>第2步看原发：</b> HCO₃⁻&lt;22为代酸趋向，&gt;27为代碱趋向；PaCO₂&gt;45为呼酸趋向，&lt;35为呼碱趋向。AB&gt;SB支持代碱/呼酸，AB&lt;SB支持代酸/呼碱。</li>
-<li><b>第3步看代偿公式：</b> 代酸Winter公式预期PaCO₂=1.5×HCO₃+8±2；代碱预期PaCO₂=0.7×HCO₃+21±2；急慢性呼酸呼碱用经典系数判断是否单纯或混合。</li>
-<li><b>第4步看AG：</b> AG&gt;20高AG代酸，AG&lt;8低AG（多为低蛋白/稀释/检验因素）。高AG时算Delta比值鉴别三重紊乱。</li>
-<li><b>第5步看辅助：</b> BE、乳酸、K/Cl、血糖、PaO₂/A-aDO₂、Hct/Ca辅助解释病因与氧合。</li>
+<li><b>第 1 步看 pH：</b> &lt;7.35 酸血症，&gt;7.45 碱血症，之间为正常或代偿期。</li>
+<li><b>第 2 步看原发：</b> HCO₃⁻&lt;22 为代酸趋向，&gt;27 为代碱趋向；PaCO₂&gt;45 为呼酸趋向，&lt;35 为呼碱趋向。AB&gt;SB 支持代碱 / 呼酸，AB&lt;SB 支持代酸 / 呼碱。</li>
+<li><b>第 3 步看代偿公式：</b> 代酸 Winter 公式预期 PaCO₂=1.5×HCO₃+8±2；代碱预期 PaCO₂=0.7×HCO₃+21±2；急慢性呼酸呼碱用经典系数判断是否单纯或混合。</li>
+<li><b>第 4 步看 AG：</b> AG&gt;20 高 AG 代酸，AG&lt;8 低 AG（多为低蛋白 / 稀释 / 检验因素）。高 AG 时算 Delta 比值鉴别三重紊乱。</li>
+<li><b>第 5 步看辅助：</b> BE、乳酸、K / Cl、血糖、PaO₂ / A-aDO₂、Hct / Ca 辅助解释病因与氧合。</li>
 </ul>
 </div>
-<footer>本工具为教学辅助，不能替代临床诊断。请结合病史、FiO₂、通气状态、血清白蛋白综合判断。</footer>
-</div>
+</section>
 
-</div>
+<footer class="site">本工具为教学辅助，不能替代临床诊断。请结合病史、FiO₂、通气状态、血清白蛋白综合判断。</footer>
+</main>
 
 <script>
 const ITEMS=[
@@ -176,6 +215,7 @@ const vals={}; let lastResult=null; let revealed=false;
 function build(){
  for(const g of ['A','B','C']){
   const el=document.getElementById('group'+g);
+  el.innerHTML='';
   ITEMS.filter(x=>x.group===g).forEach(it=>{
    const d=document.createElement('div');d.className='field'+(it.req?' req':'');d.id='field_'+it.id;
    d.innerHTML=`<div><div class="name">${it.name}${it.req?'<i>必填</i>':'<i class="opt">选填</i>'}</div><div class="ref">参考：${it.ref} ${it.unit}</div><div class="item-desc">${it.desc||''}</div><div class="flag" id="flag_${it.id}"></div></div>
@@ -230,7 +270,6 @@ function analyze(){
  ab.classList.remove('show');ab.innerHTML='';
  ITEMS.forEach(it=>liveFlag(it));
  const v={};ITEMS.forEach(it=>v[it.id]=num(it.id));
- // 自动AG
  let agAuto=null;
  if(v.AG===null&&v.Na!==null&&v.Cl!==null&&v.AB!==null){agAuto=v.Na-(v.Cl+v.AB);v.AGcalc=agAuto}
  const agEff=v.AG!==null?v.AG:agAuto;
@@ -262,7 +301,6 @@ function interpret(v,agEff,agAuto){
  const diff=hco3-sb;
  s2+=`<li>AB ${hco3} vs SB ${sb}：${diff>0?`AB＞SB（+${diff.toFixed(1)}），支持代谢性碱中毒 / 呼吸性酸中毒` : diff<0?`AB＜SB（${diff.toFixed(1)}），支持代谢性酸中毒 / 呼吸性碱中毒`:'AB≈SB，无明显急慢性呼吸成分别离'}</li>`;
  steps.push(s2);
- // 代偿公式
  let comp=[];
  if(metLow){
   const exp=1.5*hco3+8;comp.push(`代酸Winter公式：预期PaCO₂ = 1.5×${hco3}+8 = ${exp.toFixed(1)}±2 → ${(exp-2).toFixed(1)}~${(exp+2).toFixed(1)}，实测${paco2} ${paco2>exp+2?'偏高，提示合并呼吸性酸中毒':paco2<exp-2?'偏低，提示合并呼吸性碱中毒':'符合单纯代酸代偿'}`);
@@ -280,7 +318,6 @@ function interpret(v,agEff,agAuto){
  }
  if(!comp.length)comp.push('HCO₃⁻与PaCO₂均在正常范围内或仅边界轻度偏移，无需套用失代偿公式，重点看AB/SB与AG。');
  steps.push(`<h4>3. 代偿验证</h4><li>${comp.join('</li><li>')}</li>`);
- // AG
  let agTxt='';
  if(agEff!==null&&agEff!==undefined){
   const st=agEff>20?'明显升高（高AG代酸）':agEff>=10?'正常':'降低';
@@ -292,7 +329,6 @@ function interpret(v,agEff,agAuto){
   if(agEff<8)agTxt+='；低AG多见于低白蛋白/血液稀释/检验因素，少见为阳离子副蛋白';
  } else agTxt='AG无数据（钠氯AB不全或未填写），跳过AG分析。';
  steps.push(`<h4>4. AG与电解质</h4><li>${agTxt}</li><li>Na ${v.Na}，Cl ${v.Cl}（${v.Cl>109?'偏高氯，倾向高氯性代酸/抵消AG':v.Cl<98?'偏低氯，倾向代碱':'正常'}），K ${v.K??'—'}${v.K!==null?(v.K<3.5?'↓ 代碱/利尿呕吐常见低钾':v.K>5.5?'↑ 代酸/肾衰常见高钾':'正常'):''}</li>`);
- // 辅助
  const aux=[];
  if(v.BE!==null)aux.push(`BE ${v.BE} ${v.BE>3?'正值加大（碱过多）':v.BE<-3?'负值加大（酸过多）':'正常'}`);
  if(v.Lac!==null)aux.push(`乳酸 ${v.Lac} ${v.Lac>2?'↑ 组织低灌注/缺氧可能':v.Lac>1.7?'临界高':'正常，无明显休克缺氧'}`);
@@ -304,7 +340,6 @@ function interpret(v,agEff,agAuto){
  if(v.TCO2!==null)aux.push(`TCO₂ ${v.TCO2} 与AB趋势${Math.abs(v.TCO2-hco3)<3?'一致':'分离，注意检验'}`);
  if(!aux.length)aux.push('选填辅助指标均为空，仅以核心6项判读。');
  steps.push(`<h4>5. 氧合与代谢辅助</h4><li>${aux.join('</li><li>')}</li>`);
- // 诊断综合
  let diag='';
  const bothUp=metHigh&&respHigh, bothDown=metLow&&respLow;
  if(ph>=7.35&&ph<=7.45){
@@ -329,7 +364,6 @@ function interpret(v,agEff,agAuto){
   else diag='碱血症，混合因素待查';
  }
  if(agEff!==null&&agEff<8)diag+='（合并低AG，需查白蛋白/稀释）';
- // tags
  if(diag.includes('代酸')||diag.includes('代谢性酸中毒'))tags.push('代谢性酸中毒');
  if(diag.includes('代碱')||diag.includes('代谢性碱中毒'))tags.push('代谢性碱中毒');
  if(diag.includes('呼酸')||diag.includes('呼吸性酸中毒'))tags.push('呼吸性酸中毒');
@@ -337,7 +371,6 @@ function interpret(v,agEff,agAuto){
  if(agEff>20)tags.push('高AG');
  if(agEff!==null&&agEff<8)tags.push('低AG');
  if(v.AaDO2!==null&&v.AaDO2>75)tags.push('换气障碍');
- // causes
  const C={
   '代谢性酸中毒':['严重腹泻、肠瘘、胰瘘、胆道引流致NaHCO₃丢失','肾衰竭/肾小管功能异常、乙酰唑胺','缺氧低灌注致乳酸性酸中毒（查乳酸/循环）','糖尿病酮症、饥饿、酒精性酮症','外源固定酸：阿司匹林、氯化铵、盐酸精氨酸','高钾血症致H⁺外移'],
   '代谢性碱中毒':['剧烈呕吐、长期胃肠减压丢H⁺丢Cl⁻（低氯低钾性）','袢利尿剂/噻嗪类、醛固酮增多','过量NaHCO₃、乳酸钠/乙酸钠、大量库存血（枸橼酸盐）','低钾血症：H⁺内移+肾排H⁺增多，可见反常性酸性尿'],
